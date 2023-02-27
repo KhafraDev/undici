@@ -170,3 +170,10 @@ export function resolveStatusPath (path, status) {
 
   return { topLevel: status ?? {}, file: status?.[paths.at(-1)] ?? {} }
 }
+
+const AsyncFunction = async function () {}.constructor
+
+export async function asyncEval (code) {
+  const fn = new AsyncFunction(code)
+  return await fn()
+}

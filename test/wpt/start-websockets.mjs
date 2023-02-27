@@ -20,6 +20,27 @@ child.on('exit', (code) => process.exit(code))
 for await (const [message] of on(child, 'message')) {
   if (message.server) {
     const runner = new WPTRunner('websockets', message.server)
+    runner.addInitScript(`
+      const globalPropertyDescriptors = {
+        writable: true,
+        enumerable: false,
+        configurable: true
+      }
+
+      const { CloseEvent } = await import('../../../../lib/websocket/events.js')
+      const { WebSocket } = await import('../../../../lib/websocket/websocket.js')
+
+      Object.defineProperties(globalThis, {
+        WebSocket: {
+          ...globalPropertyDescriptors,
+          value: WebSocket
+        },
+        CloseEvent: {
+          ...globalPropertyDescriptors,
+          value: CloseEvent
+        },
+      })
+    `)
     runner.run()
 
     runner.once('completion', () => {

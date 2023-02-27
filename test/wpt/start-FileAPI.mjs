@@ -15,6 +15,27 @@ child.on('exit', (code) => process.exit(code))
 for await (const [message] of on(child, 'message')) {
   if (message.server) {
     const runner = new WPTRunner('FileAPI', message.server)
+    runner.addInitScript(`
+      const globalPropertyDescriptors = {
+        writable: true,
+        enumerable: false,
+        configurable: true
+      }
+
+      const buffer = await import('node:buffer')
+      const { File, FileReader } = await import('../../../../index.js')
+
+      Object.defineProperties(globalThis, {
+        File: {
+          ...globalPropertyDescriptors,
+          value: buffer.File ?? File
+        },
+        FileReader: {
+          ...globalPropertyDescriptors,
+          value: FileReader
+        }
+      })
+    `)
     runner.run()
 
     runner.once('completion', () => {

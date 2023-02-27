@@ -1,20 +1,11 @@
-import { join } from 'node:path'
-import { runInThisContext } from 'node:vm'
-import { parentPort, workerData } from 'node:worker_threads'
-import { readFileSync } from 'node:fs'
 import buffer from 'node:buffer'
-import {
-  setGlobalOrigin,
-  Response,
-  Request,
-  fetch,
-  FormData,
-  File,
-  Headers,
-  FileReader
-} from '../../../../index.js'
-import { WebSocket } from '../../../../lib/websocket/websocket.js'
-import { CloseEvent } from '../../../../lib/websocket/events.js'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { setFlagsFromString } from 'node:v8'
+import { runInNewContext, runInThisContext } from 'node:vm'
+import { parentPort, workerData } from 'node:worker_threads'
+import { setGlobalOrigin } from '../../../../index.js'
+import { asyncEval } from './util.mjs'
 
 const { initScripts, meta, test, url, path } = workerData
 
@@ -39,49 +30,17 @@ const globalPropertyDescriptors = {
 }
 
 Object.defineProperties(globalThis, {
-  fetch: {
-    ...globalPropertyDescriptors,
-    enumerable: true,
-    value: fetch
-  },
-  File: {
-    ...globalPropertyDescriptors,
-    value: buffer.File ?? File
-  },
-  FormData: {
-    ...globalPropertyDescriptors,
-    value: FormData
-  },
-  Headers: {
-    ...globalPropertyDescriptors,
-    value: Headers
-  },
-  Request: {
-    ...globalPropertyDescriptors,
-    value: Request
-  },
-  Response: {
-    ...globalPropertyDescriptors,
-    value: Response
-  },
-  FileReader: {
-    ...globalPropertyDescriptors,
-    value: FileReader
-  },
-  WebSocket: {
-    ...globalPropertyDescriptors,
-    value: WebSocket
-  },
-  CloseEvent: {
-    ...globalPropertyDescriptors,
-    value: CloseEvent
-  },
   Blob: {
     ...globalPropertyDescriptors,
     // See https://github.com/nodejs/node/pull/45659
     value: buffer.Blob
   }
 })
+
+// Inject any script the user provided before running the tests.
+for (const initScript of initScripts) {
+  await asyncEval(initScript)
+}
 
 // self is required by testharness
 // GLOBAL is required by self
@@ -131,16 +90,15 @@ add_completion_callback((_, status) => {
 
 setGlobalOrigin(new URL(urlPath, url))
 
-// Inject any script the user provided before
-// running the tests.
-for (const initScript of initScripts) {
-  runInThisContext(initScript)
-}
-
 // Inject any files from the META tags
 for (const script of meta.scripts) {
   runInThisContext(script)
 }
+
+// A few tests require gc, which can't be passed to a Worker.
+// see https://github.com/nodejs/node/issues/16595#issuecomment-340288680
+setFlagsFromString('--expose-gc')
+globalThis.gc = runInNewContext('gc')
 
 // Finally, run the test.
 runInThisContext(test)
