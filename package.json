@@ -98,7 +98,7 @@
   "devDependencies": {
     "@matteo.collina/tspl": "^0.1.1",
     "@sinonjs/fake-timers": "^11.1.0",
-    "@types/node": "^18.0.3",
+    "@types/node": "^20.12.5",
     "abort-controller": "^3.0.0",
     "borp": "^0.10.0",
     "c8": "^9.1.0",
