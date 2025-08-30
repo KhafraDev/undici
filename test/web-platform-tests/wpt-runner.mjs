@@ -1,9 +1,12 @@
 import { spawn } from 'node:child_process'
-import { once } from 'node:events'
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { debuglog } from 'node:util'
+import {
+  sanitizeUnpairedSurrogates,
+  createDeferredPromise
+} from './runner/utils.mjs'
 
 const WPT_DIR = join(import.meta.dirname, 'wpt')
 const EXPECTATION_PATH = join(import.meta.dirname, 'expectation.json')
@@ -11,11 +14,16 @@ const EXPECTATION_PATH = join(import.meta.dirname, 'expectation.json')
 const log = debuglog('UNDICI_WPT')
 
 async function runWithTestUtil (testFunction) {
+  const { promise, resolve, reject } = createDeferredPromise()
+
   console.log('Starting WPT server...')
   const proc = spawn('python3', ['wpt', 'serve', '--config', '../runner/config.json'], {
     cwd: WPT_DIR,
     stdio: 'inherit'
   })
+
+  proc.once('exit', () => resolve())
+  proc.once('error', (err) => reject(err))
 
   const serverUrl = 'http://web-platform.test:8000/'
 
@@ -36,76 +44,87 @@ async function runWithTestUtil (testFunction) {
 
   console.log(`✅ WPT server started at ${serverUrl}`)
 
+  let results
+
   try {
-    return await testFunction()
+    results = await testFunction()
   } finally {
     console.log('Killing WPT server')
 
-    proc.kill()
-    await once(proc, 'exit')
+    if (!proc.killed) {
+      proc.kill('SIGINT')
+    }
   }
+
+  await promise
+  return results
 }
 
 function runSingleTest (url, options, expectation, timeout = 10000) {
   const startTime = Date.now()
+  const { promise, resolve, reject } = createDeferredPromise()
 
-  return new Promise((resolve) => {
-    const proc = spawn('node', [
-      '--expose-gc',
-      '--no-warnings',
-      join(import.meta.dirname, 'runner/test-runner.mjs'),
-      url.toString()
-    ], {
-      stdio: ['ignore', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        NO_COLOR: '1'
-      }
-    })
+  const proc = spawn('node', [
+    '--expose-gc',
+    '--no-warnings',
+    join(import.meta.dirname, 'runner/test-runner.mjs'),
+    url.toString()
+  ], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: {
+      ...process.env,
+      NO_COLOR: '1'
+    }
+  })
 
-    const cases = []
-    let harnessStatus = null
-    let output = ''
+  const cases = []
+  let harnessStatus = null
+  let output = ''
 
-    const timer = setTimeout(() => {
+  const timer = setTimeout(() => {
+    if (!proc.killed) {
       proc.kill('SIGINT')
-    }, timeout)
+    }
+  }, timeout)
 
-    proc.stdout.setEncoding('utf-8')
-    proc.stdout.on('data', (chunk) => {
-      output += chunk
+  proc.stdout.setEncoding('utf-8')
+  proc.stdout.on('data', (chunk) => {
+    output += chunk
 
-      let delimiterIndex
-      while ((delimiterIndex = output.indexOf('#$#$#')) !== -1) {
-        const endIndex = output.indexOf('\n', delimiterIndex)
-        if (endIndex !== -1) {
-          const message = output.slice(delimiterIndex + 5, endIndex)
-          try {
-            const { tests, harnessStatus: _harnessStatus } = JSON.parse(message)
-            harnessStatus = _harnessStatus
-            cases.push(...tests)
-          } catch (e) {
-            console.error('Failed to parse:', message)
-          }
-          output = output.slice(endIndex + 1)
-        } else {
-          break // Wait for more data
+    let delimiterIndex
+    while ((delimiterIndex = output.indexOf('#$#$#')) !== -1) {
+      const endIndex = output.indexOf('\n', delimiterIndex)
+      if (endIndex !== -1) {
+        const message = output.slice(delimiterIndex + 5, endIndex)
+        try {
+          const { tests, harnessStatus: _harnessStatus } = JSON.parse(message)
+          harnessStatus = _harnessStatus
+          cases.push(...tests)
+        } catch (e) {
+          console.error('Failed to parse:', message)
         }
+        output = output.slice(endIndex + 1)
+      } else {
+        break // Wait for more data
       }
-    })
+    }
+  })
 
-    proc.on('exit', () => {
-      clearTimeout(timer)
-      const duration = Date.now() - startTime
+  proc.once('exit', () => {
+    clearTimeout(timer)
+    const duration = Date.now() - startTime
 
-      resolve({
-        status: harnessStatus?.status ?? 1,
-        harnessStatus,
-        duration,
-        cases
-      })
+    resolve({
+      status: harnessStatus?.status ?? 1,
+      harnessStatus,
+      duration,
+      cases
     })
   })
+
+  proc.once('error', (err) => reject(err))
+
+  return promise
 }
 
 function getExpectation () {
@@ -201,6 +220,56 @@ function discoverTestsToRun (filter, expectation) {
   }
 
   return tests
+}
+
+function generateWPTReport (results, startTime, endTime) {
+  const reportResults = []
+
+  for (const { test, result } of results) {
+    const status = result.status !== 0
+      ? 'CRASH'
+      : result.harnessStatus?.status === 0
+        ? 'OK'
+        : 'ERROR'
+
+    const message = result.harnessStatus?.message ?? null
+    const reportResult = {
+      test: test.path,
+      subtests: result.cases.map((c) => {
+        let expected
+        if (c.status !== 0) {
+          if (typeof test.expectation === 'boolean') {
+            expected = test.expectation ? 'PASS' : 'FAIL'
+          } else if (Array.isArray(test.expectation)) {
+            expected = test.expectation.includes(c.name) ? 'FAIL' : 'PASS'
+          } else {
+            expected = 'PASS'
+          }
+        }
+
+        return {
+          name: sanitizeUnpairedSurrogates(c.name),
+          status: c.status === 0 ? 'PASS' : 'FAIL',
+          message: c.message ? sanitizeUnpairedSurrogates(c.message) : null,
+          expected,
+          known_intermittent: []
+        }
+      }),
+      status,
+      message: message ? sanitizeUnpairedSurrogates(message) : null,
+      duration: result.duration,
+      expected: status === 'OK' ? undefined : 'OK',
+      known_intermittent: []
+    }
+
+    reportResults.push(reportResult)
+  }
+
+  return {
+    time_start: startTime,
+    time_end: endTime,
+    results: reportResults
+  }
 }
 
 async function setup () {
@@ -330,6 +399,7 @@ async function run (filters = []) {
 
       const timeout = test.options.timeout === 'long' ? 60_000 : 10_000
       const result = await runSingleTest(test.url, test.options, test.expectation, timeout)
+
       testResults.push({ test, result })
 
       console.log(`${test.path}: ${result.cases.length} tests ran in ${result.duration}ms:`)
@@ -372,6 +442,11 @@ async function run (filters = []) {
   console.log('='.repeat(50))
 
   updateExpectations(results)
+
+  if (process.env.WPT_REPORT) {
+    const report = generateWPTReport(results, startTime, endTime)
+    writeFileSync(process.env.WPT_REPORT, JSON.stringify(report))
+  }
 }
 
 // CLI
@@ -384,10 +459,7 @@ switch (command) {
     break
   case 'run':
     // TODO: find what's causing the unsettled top-level await
-    run(filters).then(
-      () => process.exit(0),
-      () => process.exit(1)
-    )
+    await run(filters)
     break
   default:
     console.log(`
