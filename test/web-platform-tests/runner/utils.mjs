@@ -20,4 +20,4 @@ function codeUnitStr (char) {
  * @type {import('../../../lib/util/promise')['createDeferredPromise']}
  */
 export const createDeferredPromise =
-  Promise.withResolvers?.bind(Promise) ?? (await import('../../../lib/util/promise')).createDeferredPromise
+  Promise.withResolvers?.bind(Promise) ?? (await import('../../../lib/util/promise.js')).createDeferredPromise
