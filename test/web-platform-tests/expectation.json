@@ -4808,8 +4808,7 @@
             },
             {
               "name": "Consume response's body: from text with correct multipart type to formData with BOM",
-              "success": false,
-              "message": "assert_equals: Retrieve and verify response's body expected \"--boundary-0.16075435275547334\\r\\nContent-Disposition: form-data;name=\\\"name\\\"\\r\\n\\r\\n﻿quick﻿fox﻿\\r\\n--boundary-0.16075435275547334--\\r\\n\" but got \"--boundary-0.16075435275547334\\r\\nContent-Disposition: form-data;name=\\\"name\\\"\\r\\n\\r\\nquick﻿fox﻿\\r\\n--boundary-0.16075435275547334--\\r\\n\""
+              "success": true
             },
             {
               "name": "Consume response's body: from text without correct multipart type to formData (error case)",
@@ -4867,7 +4866,7 @@
             {
               "name": "Consume response's body: from FormData to blob",
               "success": false,
-              "message": "assert_equals: Blob body type should be computed from the response Content-Type expected \"multipart/form-data; boundary=----formdata-undici-035234180410\" but got \"multipart/form-data;boundary=----formdata-undici-035234180410\""
+              "message": "assert_equals: Blob body type should be computed from the response Content-Type expected \"multipart/form-data; boundary=----formdata-undici-084518311125\" but got \"multipart/form-data;boundary=----formdata-undici-084518311125\""
             },
             {
               "name": "Consume response's body: from FormData to text",
