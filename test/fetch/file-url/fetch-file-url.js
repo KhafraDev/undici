@@ -12,7 +12,7 @@ test('fetching a file url works', async () => {
   await assert.doesNotReject(fetch(url))
 })
 
-test('fetching one outside of the permission scope rejects', async (t) => {
+test('fetching one outside of the permission scope rejects', async () => {
   const url = new URL(join(pathToFileURL(process.cwd()).toString(), '..'))
 
   await assert.rejects(fetch(url), new TypeError('fetch failed'))
