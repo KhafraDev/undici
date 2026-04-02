@@ -125,6 +125,7 @@ export declare namespace Client {
      * Maximum allowed size in bytes for decompressed WebSocket messages when using the permessage-deflate extension.
      * Prevents decompression bomb attacks where a small compressed payload expands to an extremely large size.
      * The check uses a conservative 10x expansion ratio estimate for early rejection.
+     * Set to 0 to disable the limit.
      * @default 67108864 (64 MB)
      */
     maxDecompressedMessageSize?: number;

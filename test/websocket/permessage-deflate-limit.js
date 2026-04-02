@@ -2,6 +2,7 @@
 
 const { test } = require('node:test')
 const { once } = require('node:events')
+const { setTimeout: sleep } = require('node:timers/promises')
 const { WebSocketServer } = require('ws')
 const { WebSocket, Agent } = require('../..')
 
@@ -149,11 +150,51 @@ test('Messages over the limit are rejected', async (t) => {
   // Wait for connection to close (should happen when limit is exceeded)
   // Use Promise.race with a timeout to avoid hanging forever
   const closePromise = once(client, 'close')
-  const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 5000))
+  const timeoutPromise = sleep(5000)
 
   await Promise.race([closePromise, timeoutPromise])
 
   t.assert.strictEqual(messageReceived, false, 'Message over limit should be rejected')
   t.assert.ok(closeEvent !== null, 'Close event should have been emitted')
   t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
+})
+
+test('Limit can be disabled by setting maxDecompressedMessageSize to 0', async (t) => {
+  const server = new WebSocketServer({
+    port: 0,
+    perMessageDeflate: true
+  })
+
+  t.after(() => server.close())
+  await once(server, 'listening')
+
+  const dataSize = 100 * 1024 * 1024 // 100 MB
+
+  server.on('connection', (ws) => {
+    ws.send(Buffer.alloc(dataSize, 0x41), { binary: true })
+  })
+
+  // Set limit to 0 (disabled)
+  const agent = new Agent({
+    webSocket: {
+      maxDecompressedMessageSize: 0
+    }
+  })
+
+  t.after(() => agent.close())
+
+  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+
+  // Use Promise.race with timeout since large message takes time
+  const messagePromise = once(client, 'message')
+  const timeoutPromise = sleep(10000)
+
+  const result = await Promise.race([messagePromise, timeoutPromise])
+
+  if (result) {
+    t.assert.strictEqual(result[0].data.size, dataSize, 'Large message should be received when limit is disabled')
+    client.close()
+  } else {
+    t.fail('Test timed out waiting for large message')
+  }
 })
