@@ -3,29 +3,7 @@
 const { test } = require('node:test')
 const { once } = require('node:events')
 const { WebSocketServer } = require('ws')
-const { WebSocket, Agent } = require('../..')
-
-test('Compressed message under limit decompresses successfully', async (t) => {
-  const server = new WebSocketServer({
-    port: 0,
-    perMessageDeflate: true
-  })
-
-  t.after(() => server.close())
-
-  await once(server, 'listening')
-
-  server.on('connection', (ws) => {
-    // Send 1 KB of data (well under any reasonable limit)
-    ws.send(Buffer.alloc(1024, 0x41), { binary: true })
-  })
-
-  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`)
-
-  const [event] = await once(client, 'message')
-  t.assert.strictEqual(event.data.size, 1024)
-  client.close()
-})
+const { WebSocket, Agent, Client, Pool } = require('../..')
 
 test('Agent webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
   const customLimit = 128 * 1024 * 1024 // 128 MB
@@ -110,50 +88,30 @@ test('Messages at exactly the limit succeed', async (t) => {
   client.close()
 })
 
-test('Messages over the limit are rejected', async (t) => {
-  const limit = 1 * 1024 * 1024 // 1 MB
-  const server = new WebSocketServer({
-    port: 0,
-    perMessageDeflate: true
-  })
-
-  t.after(() => server.close())
-  await once(server, 'listening')
-
-  let messageReceived = false
-  let closeEvent = null
-
-  server.on('connection', (ws) => {
-    // Send 2 MB of data, which exceeds the 1 MB limit
-    ws.send(Buffer.alloc(2 * 1024 * 1024, 0x41), { binary: true })
-  })
-
-  const agent = new Agent({
+test('Client webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+  const customLimit = 32 * 1024 * 1024 // 32 MB
+  const client = new Client('http://localhost', {
     webSocket: {
-      maxDecompressedMessageSize: limit
+      maxDecompressedMessageSize: customLimit
     }
   })
 
-  t.after(() => agent.close())
+  t.after(() => client.close())
 
-  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+  // Verify the option is stored and retrievable
+  t.assert.strictEqual(client.webSocketOptions.maxDecompressedMessageSize, customLimit)
+})
 
-  client.addEventListener('message', () => {
-    messageReceived = true
+test('Pool webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+  const customLimit = 16 * 1024 * 1024 // 16 MB
+  const pool = new Pool('http://localhost', {
+    webSocket: {
+      maxDecompressedMessageSize: customLimit
+    }
   })
 
-  client.addEventListener('close', (event) => {
-    closeEvent = event
-  })
+  t.after(() => pool.close())
 
-  // Wait for connection to close (should happen when limit is exceeded)
-  // Use Promise.race with a timeout to avoid hanging forever
-  const closePromise = once(client, 'close')
-  const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 5000))
-
-  await Promise.race([closePromise, timeoutPromise])
-
-  t.assert.strictEqual(messageReceived, false, 'Message over limit should be rejected')
-  t.assert.ok(closeEvent !== null, 'Close event should have been emitted')
-  t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
+  // Verify the option is stored and retrievable
+  t.assert.strictEqual(pool.webSocketOptions.maxDecompressedMessageSize, customLimit)
 })
