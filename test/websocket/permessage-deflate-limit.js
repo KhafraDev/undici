@@ -28,18 +28,18 @@ test('Compressed message under limit decompresses successfully', async (t) => {
   client.close()
 })
 
-test('Agent webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+test('Agent webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   const customLimit = 128 * 1024 * 1024 // 128 MB
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: customLimit
+      maxPayloadSize: customLimit
     }
   })
 
   t.after(() => agent.close())
 
   // Verify the option is stored and retrievable
-  t.assert.strictEqual(agent.webSocketOptions.maxDecompressedMessageSize, customLimit)
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, customLimit)
 })
 
 test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
@@ -48,10 +48,10 @@ test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
   t.after(() => agent.close())
 
   // Default should be 64 MB
-  t.assert.strictEqual(agent.webSocketOptions.maxDecompressedMessageSize, 64 * 1024 * 1024)
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 64 * 1024 * 1024)
 })
 
-test('Custom maxDecompressedMessageSize allows messages under limit', async (t) => {
+test('Custom maxPayloadSize allows messages under limit', async (t) => {
   const server = new WebSocketServer({
     port: 0,
     perMessageDeflate: true
@@ -69,7 +69,7 @@ test('Custom maxDecompressedMessageSize allows messages under limit', async (t) 
   // Set custom limit of 1 MB via Agent
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: 1 * 1024 * 1024
+      maxPayloadSize: 1 * 1024 * 1024
     }
   })
 
@@ -98,7 +98,7 @@ test('Messages at exactly the limit succeed', async (t) => {
 
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: limit
+      maxPayloadSize: limit
     }
   })
 
@@ -131,7 +131,7 @@ test('Messages over the limit are rejected', async (t) => {
 
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: limit
+      maxPayloadSize: limit
     }
   })
 
@@ -159,7 +159,7 @@ test('Messages over the limit are rejected', async (t) => {
   t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
 })
 
-test('Limit can be disabled by setting maxDecompressedMessageSize to 0', async (t) => {
+test('Limit can be disabled by setting maxPayloadSize to 0', async (t) => {
   const server = new WebSocketServer({
     port: 0,
     perMessageDeflate: true
@@ -177,7 +177,7 @@ test('Limit can be disabled by setting maxDecompressedMessageSize to 0', async (
   // Set limit to 0 (disabled)
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: 0
+      maxPayloadSize: 0
     }
   })
 
@@ -197,4 +197,44 @@ test('Limit can be disabled by setting maxDecompressedMessageSize to 0', async (
   } else {
     t.fail('Test timed out waiting for large message')
   }
+})
+
+test('Raw uncompressed payload over limit is rejected', async (t) => {
+  const limit = 1 * 1024 * 1024 // 1 MB
+  const server = new WebSocketServer({
+    port: 0,
+    perMessageDeflate: false // Disable compression
+  })
+
+  t.after(() => server.close())
+  await once(server, 'listening')
+
+  let messageReceived = false
+
+  server.on('connection', (ws) => {
+    // Send 2 MB uncompressed
+    ws.send(Buffer.alloc(2 * 1024 * 1024, 0x41), { binary: true })
+  })
+
+  const agent = new Agent({
+    webSocket: {
+      maxPayloadSize: limit
+    }
+  })
+
+  t.after(() => agent.close())
+
+  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+
+  client.addEventListener('message', () => {
+    messageReceived = true
+  })
+
+  const closePromise = once(client, 'close')
+  const timeoutPromise = sleep(5000)
+
+  await Promise.race([closePromise, timeoutPromise])
+
+  t.assert.strictEqual(messageReceived, false, 'Raw uncompressed message over limit should be rejected')
+  t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
 })

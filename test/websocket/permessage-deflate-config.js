@@ -5,18 +5,18 @@ const { once } = require('node:events')
 const { WebSocketServer } = require('ws')
 const { WebSocket, Agent, Client, Pool } = require('../..')
 
-test('Agent webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+test('Agent webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   const customLimit = 128 * 1024 * 1024 // 128 MB
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: customLimit
+      maxPayloadSize: customLimit
     }
   })
 
   t.after(() => agent.close())
 
   // Verify the option is stored and retrievable
-  t.assert.strictEqual(agent.webSocketOptions.maxDecompressedMessageSize, customLimit)
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, customLimit)
 })
 
 test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
@@ -25,10 +25,10 @@ test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
   t.after(() => agent.close())
 
   // Default should be 64 MB
-  t.assert.strictEqual(agent.webSocketOptions.maxDecompressedMessageSize, 64 * 1024 * 1024)
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 64 * 1024 * 1024)
 })
 
-test('Custom maxDecompressedMessageSize allows messages under limit', async (t) => {
+test('Custom maxPayloadSize allows messages under limit', async (t) => {
   const server = new WebSocketServer({
     port: 0,
     perMessageDeflate: true
@@ -46,7 +46,7 @@ test('Custom maxDecompressedMessageSize allows messages under limit', async (t) 
   // Set custom limit of 1 MB via Agent
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: 1 * 1024 * 1024
+      maxPayloadSize: 1 * 1024 * 1024
     }
   })
 
@@ -75,7 +75,7 @@ test('Messages at exactly the limit succeed', async (t) => {
 
   const agent = new Agent({
     webSocket: {
-      maxDecompressedMessageSize: limit
+      maxPayloadSize: limit
     }
   })
 
@@ -88,30 +88,30 @@ test('Messages at exactly the limit succeed', async (t) => {
   client.close()
 })
 
-test('Client webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+test('Client webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   const customLimit = 32 * 1024 * 1024 // 32 MB
   const client = new Client('http://localhost', {
     webSocket: {
-      maxDecompressedMessageSize: customLimit
+      maxPayloadSize: customLimit
     }
   })
 
   t.after(() => client.close())
 
   // Verify the option is stored and retrievable
-  t.assert.strictEqual(client.webSocketOptions.maxDecompressedMessageSize, customLimit)
+  t.assert.strictEqual(client.webSocketOptions.maxPayloadSize, customLimit)
 })
 
-test('Pool webSocketOptions.maxDecompressedMessageSize is read correctly', async (t) => {
+test('Pool webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   const customLimit = 16 * 1024 * 1024 // 16 MB
   const pool = new Pool('http://localhost', {
     webSocket: {
-      maxDecompressedMessageSize: customLimit
+      maxPayloadSize: customLimit
     }
   })
 
   t.after(() => pool.close())
 
   // Verify the option is stored and retrievable
-  t.assert.strictEqual(pool.webSocketOptions.maxDecompressedMessageSize, customLimit)
+  t.assert.strictEqual(pool.webSocketOptions.maxPayloadSize, customLimit)
 })
