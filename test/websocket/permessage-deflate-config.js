@@ -19,13 +19,13 @@ test('Agent webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, customLimit)
 })
 
-test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
+test('Agent with default webSocketOptions uses 128 MB limit', async (t) => {
   const agent = new Agent()
 
   t.after(() => agent.close())
 
-  // Default should be 64 MB
-  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 64 * 1024 * 1024)
+  // Default should be 128 MB
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 128 * 1024 * 1024)
 })
 
 test('Custom maxPayloadSize allows messages under limit', async (t) => {

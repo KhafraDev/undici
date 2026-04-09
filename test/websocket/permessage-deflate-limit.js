@@ -42,13 +42,13 @@ test('Agent webSocketOptions.maxPayloadSize is read correctly', async (t) => {
   t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, customLimit)
 })
 
-test('Agent with default webSocketOptions uses 64 MB limit', async (t) => {
+test('Agent with default webSocketOptions uses 128 MB limit', async (t) => {
   const agent = new Agent()
 
   t.after(() => agent.close())
 
-  // Default should be 64 MB
-  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 64 * 1024 * 1024)
+  // Default should be 128 MB
+  t.assert.strictEqual(agent.webSocketOptions.maxPayloadSize, 128 * 1024 * 1024)
 })
 
 test('Custom maxPayloadSize allows messages under limit', async (t) => {
@@ -199,7 +199,87 @@ test('Limit can be disabled by setting maxPayloadSize to 0', async (t) => {
   }
 })
 
-test('Raw uncompressed payload over limit is rejected', async (t) => {
+test('Raw uncompressed payload over immediate limit is rejected', async (t) => {
+  const limit = 100
+  const server = new WebSocketServer({
+    port: 0,
+    perMessageDeflate: false // Disable compression
+  })
+
+  t.after(() => server.close())
+  await once(server, 'listening')
+
+  let messageReceived = false
+
+  server.on('connection', (ws) => {
+    // Send 101 bytes uncompressed so the inline payload length path is used.
+    ws.send(Buffer.alloc(101, 0x41), { binary: true })
+  })
+
+  const agent = new Agent({
+    webSocket: {
+      maxPayloadSize: limit
+    }
+  })
+
+  t.after(() => agent.close())
+
+  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+
+  client.addEventListener('message', () => {
+    messageReceived = true
+  })
+
+  const closePromise = once(client, 'close')
+  const timeoutPromise = sleep(5000)
+
+  await Promise.race([closePromise, timeoutPromise])
+
+  t.assert.strictEqual(messageReceived, false, 'Raw uncompressed message over limit should be rejected')
+  t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
+})
+
+test('Raw uncompressed payload over 16-bit extended limit is rejected', async (t) => {
+  const limit = 1 * 1024 // 1 KB
+  const server = new WebSocketServer({
+    port: 0,
+    perMessageDeflate: false // Disable compression
+  })
+
+  t.after(() => server.close())
+  await once(server, 'listening')
+
+  let messageReceived = false
+
+  server.on('connection', (ws) => {
+    // Send 2 KB uncompressed so the extended 16-bit payload length path is used.
+    ws.send(Buffer.alloc(2 * 1024, 0x41), { binary: true })
+  })
+
+  const agent = new Agent({
+    webSocket: {
+      maxPayloadSize: limit
+    }
+  })
+
+  t.after(() => agent.close())
+
+  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+
+  client.addEventListener('message', () => {
+    messageReceived = true
+  })
+
+  const closePromise = once(client, 'close')
+  const timeoutPromise = sleep(5000)
+
+  await Promise.race([closePromise, timeoutPromise])
+
+  t.assert.strictEqual(messageReceived, false, 'Raw uncompressed message over limit should be rejected')
+  t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
+})
+
+test('Raw uncompressed payload over 64-bit extended limit is rejected', async (t) => {
   const limit = 1 * 1024 * 1024 // 1 MB
   const server = new WebSocketServer({
     port: 0,
@@ -212,7 +292,7 @@ test('Raw uncompressed payload over limit is rejected', async (t) => {
   let messageReceived = false
 
   server.on('connection', (ws) => {
-    // Send 2 MB uncompressed
+    // Send 2 MB uncompressed so the extended 64-bit payload length path is used.
     ws.send(Buffer.alloc(2 * 1024 * 1024, 0x41), { binary: true })
   })
 

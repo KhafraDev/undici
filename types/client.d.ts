@@ -126,7 +126,7 @@ export declare namespace Client {
      * Applied to both uncompressed and decompressed (permessage-deflate) messages.
      * For decompressed messages, uses a conservative 10x expansion ratio estimate for early rejection.
      * Set to 0 to disable the limit.
-     * @default 67108864 (64 MB)
+     * @default 134217728 (128 MB)
      */
     maxPayloadSize?: number;
   }
