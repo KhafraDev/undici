@@ -124,7 +124,6 @@ export declare namespace Client {
     /**
      * Maximum allowed payload size in bytes for WebSocket messages.
      * Applied to both uncompressed and decompressed (permessage-deflate) messages.
-     * For decompressed messages, uses a conservative 10x expansion ratio estimate for early rejection.
      * Set to 0 to disable the limit.
      * @default 134217728 (128 MB)
      */
