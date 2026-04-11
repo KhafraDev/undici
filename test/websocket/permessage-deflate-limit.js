@@ -199,6 +199,56 @@ test('Limit can be disabled by setting maxPayloadSize to 0', async (t) => {
   }
 })
 
+test('Fragmented compressed payload over total limit is rejected', async (t) => {
+  const limit = 1 * 1024 * 1024 // 1 MB
+  const fragmentSize = 768 * 1024 // 768 KB
+  const server = new WebSocketServer({
+    port: 0,
+    perMessageDeflate: true
+  })
+
+  t.after(() => server.close())
+  await once(server, 'listening')
+
+  let messageReceived = false
+
+  server.on('connection', (ws) => {
+    ws.send(Buffer.alloc(fragmentSize, 0x41), {
+      binary: true,
+      compress: true,
+      fin: false
+    })
+
+    ws.send(Buffer.alloc(fragmentSize, 0x41), {
+      binary: true,
+      compress: true,
+      fin: true
+    })
+  })
+
+  const agent = new Agent({
+    webSocket: {
+      maxPayloadSize: limit
+    }
+  })
+
+  t.after(() => agent.close())
+
+  const client = new WebSocket(`ws://127.0.0.1:${server.address().port}`, { dispatcher: agent })
+
+  client.addEventListener('message', () => {
+    messageReceived = true
+  })
+
+  const closePromise = once(client, 'close')
+  const timeoutPromise = sleep(5000)
+
+  await Promise.race([closePromise, timeoutPromise])
+
+  t.assert.strictEqual(messageReceived, false, 'Fragmented compressed message over total limit should be rejected')
+  t.assert.strictEqual(client.readyState, WebSocket.CLOSED, 'Connection should be closed after exceeding limit')
+})
+
 test('Raw uncompressed payload over immediate limit is rejected', async (t) => {
   const limit = 100
   const server = new WebSocketServer({
