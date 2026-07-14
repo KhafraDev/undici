@@ -220,6 +220,16 @@ const { EventSource } = require('./lib/web/eventsource/eventsource')
 
 module.exports.EventSource = EventSource
 
+module.exports.WebTransport = require('./lib/web/webtransport/webtransport').WebTransport
+module.exports.WebTransportError = require('./lib/web/webtransport/error').WebTransportError
+module.exports.WebTransportBidirectionalStream = require('./lib/web/webtransport/bidirectionalstream').WebTransportBidirectionalStream
+module.exports.WebTransportSendStream = require('./lib/web/webtransport/sendstream').WebTransportSendStream
+module.exports.WebTransportWriter = require('./lib/web/webtransport/sendstream').WebTransportWriter
+module.exports.WebTransportReceiveStream = require('./lib/web/webtransport/receivestream').WebTransportReceiveStream
+module.exports.WebTransportSendGroup = require('./lib/web/webtransport/sendgroup').WebTransportSendGroup
+module.exports.WebTransportDatagramDuplexStream = require('./lib/web/webtransport/datagrams').WebTransportDatagramDuplexStream
+module.exports.WebTransportDatagramsWritable = require('./lib/web/webtransport/datagrams').WebTransportDatagramsWritable
+
 function install () {
   globalThis.fetch = module.exports.fetch
   globalThis.Headers = module.exports.Headers
@@ -231,6 +241,15 @@ function install () {
   globalThis.ErrorEvent = module.exports.ErrorEvent
   globalThis.MessageEvent = module.exports.MessageEvent
   globalThis.EventSource = module.exports.EventSource
+  globalThis.WebTransport = module.exports.WebTransport
+  globalThis.WebTransportError = module.exports.WebTransportError
+  globalThis.WebTransportBidirectionalStream = module.exports.WebTransportBidirectionalStream
+  globalThis.WebTransportSendStream = module.exports.WebTransportSendStream
+  globalThis.WebTransportWriter = module.exports.WebTransportWriter
+  globalThis.WebTransportReceiveStream = module.exports.WebTransportReceiveStream
+  globalThis.WebTransportSendGroup = module.exports.WebTransportSendGroup
+  globalThis.WebTransportDatagramDuplexStream = module.exports.WebTransportDatagramDuplexStream
+  globalThis.WebTransportDatagramsWritable = module.exports.WebTransportDatagramsWritable
 }
 
 module.exports.install = install

@@ -108,14 +108,26 @@ test('webidl.util.ConvertToInt(V)', () => {
   }
 
   for (const signedness of ['signed', 'unsigned']) {
+    // "Round x to the nearest integer, choosing the even integer if it
+    //  lies halfway between two, and choosing +0 rather than −0."
     assert.equal(
       ConvertToInt(63.49, 64, signedness, webidl.attributes.Clamp),
-      64
+      63
     )
 
     assert.equal(
       ConvertToInt(63.51, 64, signedness, webidl.attributes.Clamp),
       64
+    )
+
+    assert.equal(
+      ConvertToInt(63.5, 64, signedness, webidl.attributes.Clamp),
+      64
+    )
+
+    assert.equal(
+      ConvertToInt(62.5, 64, signedness, webidl.attributes.Clamp),
+      62
     )
 
     assert.equal(
