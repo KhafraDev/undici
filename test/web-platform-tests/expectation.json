@@ -5808,8 +5808,7 @@
             },
             {
               "name": "Validate form data - onePartWithTransportPadding",
-              "success": false,
-              "message": "promise_test: Unhandled rejection with value: object \"TypeError: Failed to parse body as FormData.\""
+              "success": true
             },
             {
               "name": "Validate form data - onePartWithoutEpilogue",
@@ -5825,13 +5824,11 @@
             },
             {
               "name": "Validate form data - twoPartsWithTransportPadding",
-              "success": false,
-              "message": "promise_test: Unhandled rejection with value: object \"TypeError: Failed to parse body as FormData.\""
+              "success": true
             },
             {
               "name": "Validate buggy form data - empty",
-              "success": false,
-              "message": "assert_unreached: Should have rejected: undefined Reached unreachable code"
+              "success": true
             },
             {
               "name": "Validate buggy form data - cr1",
