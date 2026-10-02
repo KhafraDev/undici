@@ -11875,14 +11875,13 @@
             "success": true
           },
           {
+            "name": "Window interface: calling fetch(RequestInfo, optional RequestInit) on window with too few arguments must throw TypeError",
+            "success": true
+          },
+          {
             "name": "Window interface: operation fetch(RequestInfo, optional RequestInit)",
             "success": false,
             "message": "assert_unreached: Should have rejected: calling operation with this = {} didn't throw TypeError Reached unreachable code"
-          },
-          {
-            "name": "Window interface: calling fetch(RequestInfo, optional RequestInit) on window with too few arguments must throw TypeError",
-            "success": false,
-            "message": "assert_unreached: Should have rejected: Called with 0 arguments Reached unreachable code"
           }
         ]
       }
