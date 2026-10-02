@@ -9692,8 +9692,7 @@
             },
             {
               "name": "Redirect to invalid UTF-8",
-              "success": false,
-              "message": "assert_true: http://web-platform.test:8000/fetch/api/resources/top.txt?%EF%BF%BD ends with top.txt?%FF expected true got false"
+              "success": true
             }
           ]
         },
