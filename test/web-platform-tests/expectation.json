@@ -639,7 +639,7 @@
               "message": "assert_equals: Opaque filter: status is 0 expected 0 but got 200"
             },
             {
-              "name": "Fetch http://web-platform.test:57018/fetch/api/resources/top.txt with no-cors mode",
+              "name": "Fetch http://web-platform.test:60434/fetch/api/resources/top.txt with no-cors mode",
               "success": false,
               "message": "assert_equals: Opaque filter: status is 0 expected 0 but got 200"
             }
@@ -1498,38 +1498,31 @@
           "cases": [
             {
               "name": "statusText over H2 for status 200 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 210 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 400 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 404 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 410 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 500 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             },
             {
               "name": "statusText over H2 for status 502 should be the empty string",
-              "success": false,
-              "message": "assert_equals: statusText should be the empty string expected \"\" but got \"OMG\""
+              "success": true
             }
           ]
         },
@@ -4925,7 +4918,7 @@
             {
               "name": "Consume response's body: from FormData to blob",
               "success": false,
-              "message": "assert_equals: Blob body type should be computed from the response Content-Type expected \"multipart/form-data; boundary=----formdata-undici-071530468049\" but got \"multipart/form-data;boundary=----formdata-undici-071530468049\""
+              "message": "assert_equals: Blob body type should be computed from the response Content-Type expected \"multipart/form-data; boundary=----formdata-undici-060188913886\" but got \"multipart/form-data;boundary=----formdata-undici-060188913886\""
             },
             {
               "name": "Consume response's body: from FormData to text",
@@ -11196,28 +11189,23 @@
           "cases": [
             {
               "name": "Fetch upload streaming should be accepted on 303",
-              "success": false,
-              "message": "assert_equals: expected 200 but got 500"
+              "success": true
             },
             {
               "name": "Fetch upload streaming should fail on 301",
-              "success": false,
-              "message": "assert_unreached: Should have rejected: undefined Reached unreachable code"
+              "success": true
             },
             {
               "name": "Fetch upload streaming should fail on 302",
-              "success": false,
-              "message": "assert_unreached: Should have rejected: undefined Reached unreachable code"
+              "success": true
             },
             {
               "name": "Fetch upload streaming should fail on 307",
-              "success": false,
-              "message": "assert_unreached: Should have rejected: undefined Reached unreachable code"
+              "success": true
             },
             {
               "name": "Fetch upload streaming should fail on 308",
-              "success": false,
-              "message": "assert_unreached: Should have rejected: undefined Reached unreachable code"
+              "success": true
             }
           ]
         }
@@ -12007,7 +11995,7 @@
           {
             "name": "Opaque responses resulting from cross-origin redirects in no-cors mode do not register dictionary",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_02903771-cb95-45b6-b6af-01638652f2e1\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_a0bd66ee-edae-4fc7-9c47-eaa0daeb49f8\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           }
         ]
       },
@@ -12067,22 +12055,22 @@
           {
             "name": "Expired dictionary is not used",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_18811934-a2a8-4b59-a14a-ef970dbea22e\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_1cc9a733-b6c9-4c0e-82aa-90a27b20be3b\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary with invalid match string is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_82f09f52-3445-4d36-ac9f-4e3e14b55557\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_d0891231-389f-47d1-9326-c9c3f8ac17b3\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary with match string for a different origin is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_b3ff5d11-0c6f-4c4e-850d-d095c07f0e62\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_1439e754-67a7-4cb1-b899-1bf3dc37ca44\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary with unsupported type is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_d5caf54a-f5d3-45b6-803f-94c30c8ffc53\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_50edfbaf-9630-4634-8956-d766a92a992b\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary registration with 1024 character dictionary ID",
@@ -12092,7 +12080,7 @@
           {
             "name": "Dictionary with 1025 character dictionary ID is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_f304891a-345d-4529-b7ba-932db6f42dcb\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_c7cbfe23-b439-4f30-90c1-f9693a28f9a9\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary registration with unknown extra options succeeds",
@@ -12102,12 +12090,12 @@
           {
             "name": "Dictionary with malformed structured header is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_a74fb56b-57eb-42c0-ba34-d5e7a0e4cfdf\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_bbf99946-d99c-4684-8f9f-c0087f897d80\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary with max-age=0 is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_0e2af4d7-1cc1-494c-bbe1-525b88e46ecf\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_ad196cfb-675f-47a4-90c6-d4001c9f02f2\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary registration with dictionary ID (valid characters and backslash escaping)",
@@ -12117,7 +12105,7 @@
           {
             "name": "Dictionary with invalid character in dictionary ID is not registered",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_f949a698-1ac4-46fd-9d66-3aa602c6b7a2\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_002fc832-17c6-4b1a-a953-1bb59ab6aeea\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Available-Dictionary header is added when target of redirect matches dictionary",
@@ -12132,32 +12120,32 @@
           {
             "name": "Loading self-compressed-image-001.png.dcb using image-001.png as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_5a3fd247-6dbb-4a25-99ef-3e5f2156f0ee\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_3f37ef42-2f37-4885-9294-5b08109d5729\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-script-001.js.dcb using script-001.js as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_ec59c9ed-ed38-42fd-b458-840c1c666012\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_6079709a-ea7a-4f72-af59-55719ce7de4d\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-style-001.css.dcb using style-001.css as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_43e02b63-16c3-4ff9-925f-ecbb5655dcfe\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_641119a2-bdfd-41ca-99ca-fb7a4ea0cad3\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-image-001.png.dcz using image-001.png as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_72109f06-35bc-45a2-9545-3ab8bfe95fc8\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_f7529fa6-c5f1-4f62-a5c2-a86e0077799f\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-script-001.js.dcz using script-001.js as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_1c55539c-1b81-4996-a64d-89f83a63fe7c\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_26a631f1-f424-42e9-93c0-fdb4fef4a924\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-style-001.css.dcz using style-001.css as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_73db6d31-299d-4e64-af99-d204b2634852\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_52d44be3-4ab4-4a7a-9ce5-c6b60cb3ddc3\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           }
         ]
       },
@@ -12167,32 +12155,32 @@
           {
             "name": "Loading self-compressed-subframe-001.html.dcb using subframe-001.html as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_89f13d2a-dcab-4226-aeec-1ae37c8b62a9\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_c3823e2f-d287-4e03-884c-ea9c7af7e910\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading subframe-001-compressed-by-style-001.html.dcb using style-001.css as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_2bcce0d8-7fba-4a8f-9f7f-72c6e2651343\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_4d80ae02-6155-4744-b54c-c411ed189fd2\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading subframe-001-compressed-by-script-001.html.dcb using script-001.js as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_242a9571-e161-4707-b2b7-3d7d9ef33146\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_a9f8dc9d-e019-4f57-80d3-81391aec38f4\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading self-compressed-subframe-001.html.dcz using subframe-001.html as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_70f131ee-44c3-4074-9c77-06cd048ca8b2\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_b80ac85b-7e97-4ad1-82ad-a7dfa7c6f419\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading subframe-001-compressed-by-style-001.html.dcz using style-001.css as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_b27279a3-f4a8-467f-8e3c-70abd2e3f881\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_ae892d31-f4e9-4b03-a27e-90290fe3d813\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Loading subframe-001-compressed-by-script-001.html.dcz using script-001.js as a dictionary works",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_cb4fd84f-7974-47fa-a550-063c7699d124\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_e631c056-4843-4589-991a-91e7b9c00c09\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           }
         ]
       },
@@ -12503,7 +12491,7 @@
           {
             "name": "Dictionary with unknown match-dest is not used for fetch() API",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_64ed2482-51bb-4094-b805-636702a593c4\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_70f3b87e-9ad1-4649-a6ce-2b4467dffd17\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary registration with empty match-dest list acts as wildcard",
@@ -12518,7 +12506,7 @@
           {
             "name": "Dictionary with non-matching match-dest is not used",
             "success": false,
-            "message": "assert_equals: expected \"\\\"alt_a19bc403-494b-46e3-ada8-44e53251111d\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
+            "message": "assert_equals: expected \"\\\"alt_64511d2b-9274-4079-8062-df16476c4161\\\"\" but got \"\\\"dictionary-id\\\" header is not available\""
           },
           {
             "name": "Dictionary registration with unknown match-dest and empty string matches fetch destination",
@@ -17709,7 +17697,7 @@
           {
             "name": "Response with Cache-Control: max-age=2592000, immutable and Pragma: no-cache should be cached",
             "success": false,
-            "message": "assert_equals: Responses should be identical, indicating cache use expected \"Token: 727c27f1-86d3-4aed-9787-e4e2bf152b46\" but got \"Token: 6eddbe32-a5d8-4a59-966b-3c377c203861\""
+            "message": "assert_equals: Responses should be identical, indicating cache use expected \"Token: a1806d10-2d40-47f0-ad4e-2bdabd21ed3c\" but got \"Token: fa01f2ac-c522-45ce-954d-485503336ee5\""
           }
         ]
       },
@@ -26794,7 +26782,11 @@
               "message": "document is not defined"
             },
             {
-              "name": "Fetch: /images/gre\\ten-1x1.png",
+              "name": "Fetch: /images/green-1x1.png",
+              "success": true
+            },
+            {
+              "name": "Fetch: /images/gr\\reen-1x1.png?img=&#10;",
               "success": true
             },
             {
@@ -26802,7 +26794,7 @@
               "success": true
             },
             {
-              "name": "Fetch: /images/gr\\teen-1x1.png?img=%3C",
+              "name": "Fetch: /images/green-1x1.png?img=%3C",
               "success": true
             },
             {
@@ -26810,15 +26802,7 @@
               "success": true
             },
             {
-              "name": "Fetch: /images/green-1x1.png?img=%3C",
-              "success": true
-            },
-            {
-              "name": "Fetch: /images/green-1x1.png?img=&#10;",
-              "success": true
-            },
-            {
-              "name": "Fetch: /images/gre\\ren-1x1.png",
+              "name": "Fetch: /images/gr\\teen-1x1.png?img=%3C",
               "success": true
             },
             {
@@ -26830,23 +26814,15 @@
               "success": true
             },
             {
-              "name": "Fetch: /images/green-1x1.png",
-              "success": true
-            },
-            {
               "name": "Fetch: /images/gr\\neen-1x1.png?img=&#10;",
               "success": true
             },
             {
-              "name": "Fetch: /images/gr\\teen-1x1.png?img=&#10;",
+              "name": "Fetch: /images/gre\\ten-1x1.png",
               "success": true
             },
             {
-              "name": "Fetch: /images/green-1x1.png?img=<",
-              "success": true
-            },
-            {
-              "name": "Fetch: /images/gr\\reen-1x1.png?img=&#10;",
+              "name": "Fetch: /images/gre\\ren-1x1.png",
               "success": true
             },
             {
@@ -26855,9 +26831,21 @@
               "message": "assert_unreached: Fetch should fail. Reached unreachable code"
             },
             {
-              "name": "Fetch: /images/green-1x1.png?<\\n=block",
+              "name": "Fetch: /images/green-1x1.png?img=&#10;",
+              "success": true
+            },
+            {
+              "name": "Fetch: /images/gre\\nen-1x1.png?img=<",
               "success": false,
               "message": "assert_unreached: Fetch should fail. Reached unreachable code"
+            },
+            {
+              "name": "Fetch: /images/green-1x1.png?img=<",
+              "success": true
+            },
+            {
+              "name": "Fetch: /images/gr\\teen-1x1.png?img=&#10;",
+              "success": true
             },
             {
               "name": "Fetch: /images/gre\\ten-1x1.png?img=<",
@@ -26870,7 +26858,7 @@
               "message": "assert_unreached: Fetch should fail. Reached unreachable code"
             },
             {
-              "name": "Fetch: /images/gre\\nen-1x1.png?img=<",
+              "name": "Fetch: /images/green-1x1.png?<\\n=block",
               "success": false,
               "message": "assert_unreached: Fetch should fail. Reached unreachable code"
             },
@@ -27063,7 +27051,7 @@
           {
             "name": "Second fetch returns same response",
             "success": false,
-            "message": "assert_equals: expected \"qnpqpdgqzbwljkrcrtso\" but got \"atjcofywijkbnktubixg\""
+            "message": "assert_equals: expected \"mlkphekiickcuvypcquq\" but got \"qvywwllykovrpeluzszh\""
           }
         ]
       },
@@ -39208,11 +39196,11 @@
           "success": true
         },
         {
-          "name": "Application data is (0xFFFF + 1) byte which starts to use the 64 bit 'Extended payload length' field",
+          "name": "Application data is 0xFFFF byte which means the upper bound of the 16 bit 'Extended payload length' field.",
           "success": true
         },
         {
-          "name": "Application data is 0xFFFF byte which means the upper bound of the 16 bit 'Extended payload length' field.",
+          "name": "Application data is (0xFFFF + 1) byte which starts to use the 64 bit 'Extended payload length' field",
           "success": true
         }
       ]
@@ -41789,7 +41777,7 @@
             {
               "name": "backpressure should be applied to sent messages",
               "success": false,
-              "message": "assert_greater_than_equal: expected a number greater than or equal to 1800 but got 26.386200000000002"
+              "message": "assert_greater_than_equal: expected a number greater than or equal to 1800 but got 24.482699999999994"
             }
           ]
         },
@@ -41851,7 +41839,7 @@
             {
               "name": "writer close() promise should not resolve until handshake completes",
               "success": false,
-              "message": "assert_greater_than_equal: one second should have elapsed expected a number greater than or equal to 900 but got 0.0765999999999849"
+              "message": "assert_greater_than_equal: one second should have elapsed expected a number greater than or equal to 900 but got 0.08070000000000732"
             },
             {
               "name": "incomplete closing handshake should be considered unclean close",
@@ -41969,7 +41957,7 @@
             {
               "name": "writer close() promise should not resolve until handshake completes",
               "success": false,
-              "message": "assert_greater_than_equal: one second should have elapsed expected a number greater than or equal to 900 but got 0.09429999999997563"
+              "message": "assert_greater_than_equal: one second should have elapsed expected a number greater than or equal to 900 but got 0.09039999999998827"
             },
             {
               "name": "incomplete closing handshake should be considered unclean close",
@@ -43564,6 +43552,10 @@
           },
           {
             "name": "file with lastModified and custom name",
+            "success": true
+          },
+          {
+            "name": "append() should create a single File for each Blob",
             "success": true
           }
         ]
@@ -46057,6 +46049,136 @@
           "message": "document is not defined"
         }
       ]
+    },
+    "getallresponseheaders-after-reuse.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "getAllResponseHeaders() must not return the previous response's headers",
+          "success": false,
+          "message": "promise_test: Unhandled rejection with value: object \"ReferenceError: XMLHttpRequest is not defined\""
+        }
+      ]
+    },
+    "response-invalid-utf8.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "JSON response with invalid UTF-8 should parse with replacement characters",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        }
+      ]
+    },
+    "response-json-bom.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "JSON response with UTF-8 BOM should be parsed correctly",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        }
+      ]
+    },
+    "response-json-during-loading.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "xhr.response must be null during LOADING state for responseType json",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        }
+      ]
+    },
+    "responseXML-xml-scripting-support-disabled.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "XMLHttpRequest responseXML, svg script, appendChild",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "XMLHttpRequest responseXML, svg script, append importNode result",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "XMLHttpRequest responseXML, svg script, append adoptNode result",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "XMLHttpRequest responseXML, xhtml script, append importNode result",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "XMLHttpRequest responseXML, xhtml script, append adoptNode result",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        }
+      ]
+    },
+    "responseurl-after-abort.any.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "abort() during HEADERS_RECEIVED clears responseURL",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "abort() during LOADING clears responseURL",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "abort() during DONE clears responseURL (async)",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "abort() during DONE clears responseURL (sync)",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        },
+        {
+          "name": "responseURL reflects the new response after abort() and reuse",
+          "success": false,
+          "message": "XMLHttpRequest is not defined"
+        }
+      ]
+    },
+    "send-data-isolation.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "Modifying a Uint8Array after send() does not affect the sent data",
+          "success": false,
+          "message": "promise_test: Unhandled rejection with value: object \"ReferenceError: XMLHttpRequest is not defined\""
+        },
+        {
+          "name": "Modifying an ArrayBuffer after send() does not affect the sent data",
+          "success": false,
+          "message": "promise_test: Unhandled rejection with value: object \"ReferenceError: XMLHttpRequest is not defined\""
+        },
+        {
+          "name": "Modifying a typed array view after send() does not affect the sent data",
+          "success": false,
+          "message": "promise_test: Unhandled rejection with value: object \"ReferenceError: XMLHttpRequest is not defined\""
+        }
+      ]
+    },
+    "send-document-lone-surrogate.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "send() with Document containing lone surrogate should not throw",
+          "success": false,
+          "message": "document is not defined"
+        }
+      ]
     }
   },
   "eventsource": {
@@ -46401,6 +46523,15 @@
     "request-status-error.window.html": {
       "success": false,
       "cases": []
+    },
+    "eventsource-cross-origin-redirect-origin.any.html": {
+      "success": true,
+      "cases": [
+        {
+          "name": "MessageEvent.origin is the origin of the final URL after a cross-origin redirect",
+          "success": true
+        }
+      ]
     }
   },
   "service-workers": {
